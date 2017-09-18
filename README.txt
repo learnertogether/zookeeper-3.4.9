@@ -1,3 +1,6 @@
+#启动类：QuorumPeerMain package org.apache.zookeeper.server.quorum
+
+
 For the latest information about ZooKeeper, please visit our website at:
 
    http://zookeeper.apache.org/
