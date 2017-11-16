@@ -254,8 +254,15 @@ public class FastLeaderElection implements Election {
                          * an observer. If we ever have any other type of
                          * learner in the future, we'll have to change the
                          * way we check for observers.
+                         *
+                         *
+                         * 如果是观察者，立刻回复。
+                         * 值得注意的是，如果假定一个server不是follower，那它一定是观察者.
+                         * 如果将来有其他状态的learner，我们将改变验证是否是观察者的方式。
+                         *
                          */
                         if(!self.getVotingView().containsKey(response.sid)){
+                            //观察者
                             Vote current = self.getCurrentVote();
                             ToSend notmsg = new ToSend(ToSend.mType.notification,
                                     current.getId(),
@@ -345,6 +352,8 @@ public class FastLeaderElection implements Election {
                                  * Send a notification back if the peer that sent this
                                  * message is also looking and its logical clock is
                                  * lagging behind.
+                                 *
+                                 * 如果发送这个提议消息的peer是LOOKING状态，并且选举的逻辑时钟是落后的，那么丢弃。
                                  */
                                 if((ackstate == QuorumPeer.ServerState.LOOKING)
                                         && (n.electionEpoch < logicalclock)){
@@ -790,6 +799,10 @@ public class FastLeaderElection implements Election {
      * Starts a new round of leader election. Whenever our QuorumPeer
      * changes its state to LOOKING, this method is invoked, and it
      * sends notifications to all other peers.
+     *
+     * 开始新的一轮leader选举。
+     * 每当当前的peer的选举状态为LOOKING时，这个方法就会执行，并且会向其他peer发送提议leader消息。
+     *
      */
     public Vote lookForLeader() throws InterruptedException {
         try {
@@ -821,6 +834,8 @@ public class FastLeaderElection implements Election {
 
             /*
              * Loop in which we exchange notifications until we find a leader
+             *
+             * 循环：开始交换提议信息，直到选举出leader
              */
 
             while ((self.getPeerState() == ServerState.LOOKING) &&

@@ -501,8 +501,9 @@ public class QuorumPeer extends ZooKeeperThread implements QuorumStats.Provider 
         loadDataBase();
         //与client端交互
         cnxnFactory.start();
-        //
+        //初始化选举算法实现-->（配置文件中可选择配置）以及相关处理-->(leader选举交互[发送、接收]以守护线程的方式启动)
         startLeaderElection();
+        //run方法，开始选举
         super.start();
     }
 
