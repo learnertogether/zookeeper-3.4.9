@@ -507,9 +507,13 @@ public class FastLeaderElection implements Election {
 
     QuorumPeer self;
     Messenger messenger;
+    //本机的投票计数器
     volatile long logicalclock; /* Election instance */
+    //本机提议leader的serverId
     long proposedLeader;
+    //zxid 此id越大，证明数据越新，越有可能被选成leader
     long proposedZxid;
+    //zxid的高32位， 代表的leader的时期，每换一个leader，时期加1
     long proposedEpoch;
 
 
@@ -817,6 +821,7 @@ public class FastLeaderElection implements Election {
            self.start_fle = System.currentTimeMillis();
         }
         try {
+            //本机统计的投票信息
             HashMap<Long, Vote> recvset = new HashMap<Long, Vote>();
 
             HashMap<Long, Vote> outofelection = new HashMap<Long, Vote>();
@@ -906,6 +911,7 @@ public class FastLeaderElection implements Election {
                                     ", proposed election epoch=0x" + Long.toHexString(n.electionEpoch));
                         }
 
+                        // 把对方的投票意愿缓存起来，用于最终的统计
                         recvset.put(n.sid, new Vote(n.leader, n.zxid, n.electionEpoch, n.peerEpoch));
 
                         if (termPredicate(recvset,
