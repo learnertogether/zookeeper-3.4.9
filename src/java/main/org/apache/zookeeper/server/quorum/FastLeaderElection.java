@@ -824,10 +824,12 @@ public class FastLeaderElection implements Election {
             //本机统计的投票信息
             HashMap<Long, Vote> recvset = new HashMap<Long, Vote>();
 
+            //FOLLOWING LEADING状态的节点信息-->非LOOKING状态
             HashMap<Long, Vote> outofelection = new HashMap<Long, Vote>();
 
             int notTimeout = finalizeWait;
 
+            //提议选举自己为leader
             synchronized(this){
                 logicalclock++;
                 updateProposal(getInitId(), getInitLastLoggedZxid(), getPeerEpoch());
